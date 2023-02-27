@@ -21,8 +21,9 @@ export const addSomething = createAsyncThunk("something/addSomething", async (da
     return something;
 })
 
-export const removeSomething = createAsyncThunk("something/removeSomething", async (id) => {
-    const something = deleteSomething(id);
+export const removeSomething = createAsyncThunk("something/removeSomething", async (id, thunkAPI) => {
+    const something = await deleteSomething(id);
+    thunkAPI.dispatch(removeFromList(id))
     return something;
 })
 
@@ -38,8 +39,11 @@ const counterSlice = createSlice({
         },
         togglePostSuccess: (state) => {
             state.postSuccess = false
-        }
+        },
         // above one for hot toast
+        removeFromList: (state, action) => {
+            state.something = state.something.filter((s) => s._id !== action.payload)
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -92,5 +96,5 @@ const counterSlice = createSlice({
     },
 });
 
-export const { increment, decrement } = counterSlice.actions;
+export const { increment, decrement, togglePostSuccess, removeFromList } = counterSlice.actions;
 export default counterSlice.reducer;
